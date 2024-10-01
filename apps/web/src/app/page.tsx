@@ -1,4 +1,5 @@
 import { Button } from "@repo/ui/button";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -9,6 +10,11 @@ export default function Home() {
       <p className="mt-4 text-xl drop-shadow-lg">
         Discover our amazing products and services.
       </p>
+
+      <Button asChild>
+        <Link href="/form">Form</Link>
+      </Button>
+
       <Button>Get Started</Button>
     </div>
   );
