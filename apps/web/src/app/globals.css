@@ -1,0 +1,5 @@
+@import "@repo/ui/src/themes/default.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
