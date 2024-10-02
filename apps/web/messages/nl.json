@@ -2,10 +2,22 @@
   "example-form": {
     "page": {
       "title": "Form Page"
+    },
+    "form-component": {
+      "name": {
+        "label": "Naam",
+        "description": "Voer je naam in"
+      },
+      "email": {
+        "label": "Email",
+        "description": "Voer uw e-mailadres in"
+      },
+      "submit": "Indienen"
     }
   },
   "form": {
     "name": "Naam",
     "email": "Email"
-  }
+  },
+  "customErrors": {}
 }

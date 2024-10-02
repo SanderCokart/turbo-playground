@@ -15,6 +15,7 @@ import {
 } from "@repo/ui/form";
 import { Input } from "@repo/ui/input";
 import { Button } from "@repo/ui/button";
+import { useTranslations } from "next-intl";
 
 const schema = z.object({
   name: z.string().min(1),
@@ -22,6 +23,7 @@ const schema = z.object({
 });
 
 export const FormComponent: FC = () => {
+  const t = useTranslations("example-form.form-component");
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -42,11 +44,11 @@ export const FormComponent: FC = () => {
           name="name"
           render={({ field, fieldState, formState }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>{t("name.label")}</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
-              <FormDescription>Enter your name</FormDescription>
+              <FormDescription>{t("name.description")}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -56,16 +58,16 @@ export const FormComponent: FC = () => {
           name="email"
           render={({ field, fieldState, formState }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{t("email.label")}</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
-              <FormDescription>Enter your email address</FormDescription>
+              <FormDescription>{t("email.description")}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit">{t("submit")}</Button>
       </form>
     </Form>
   );

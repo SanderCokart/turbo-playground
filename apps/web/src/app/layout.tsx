@@ -3,8 +3,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import type { ReactNode } from "react";
 import { getLocale } from "next-intl/server";
-import { LocaleSwitcher } from "@/components/locale-switcher";
 import { GlobalProviders } from "@/app/providers/global-providers";
+import { LocaleSwitcher } from "@/components/locale-switcher";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,7 +33,9 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} flex min-h-dvh flex-col`}
       >
         <GlobalProviders>
-          <LocaleSwitcher />
+          <div className="w-fit">
+            <LocaleSwitcher />
+          </div>
 
           {children}
         </GlobalProviders>

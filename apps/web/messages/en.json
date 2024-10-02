@@ -2,10 +2,22 @@
   "example-form": {
     "page": {
       "title": "Form Page"
+    },
+    "form-component": {
+      "name": {
+        "label": "Name",
+        "description": "Enter your name"
+      },
+      "email": {
+        "label": "Email",
+        "description": "Enter your email address"
+      },
+      "submit": "Submit"
     }
   },
   "form": {
     "name": "Name",
     "email": "Email"
-  }
+  },
+  "customErrors": {}
 }
