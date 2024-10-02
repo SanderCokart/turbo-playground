@@ -1,81 +1,113 @@
-# Turborepo starter
+# Tubrorepo + shadcn-ui + next-intl + zod + react-hook-form
 
-This is an official starter Turborepo.
+## Quick Start
 
-## Using this example
-
-Run the following command:
-
-```sh
-npx create-turbo@latest
+```bash
+pnpm install && pnpm dev -filter web
 ```
 
-## What's inside?
+## What is this?
 
-This Turborepo includes the following packages/apps:
+This is an example repository using TurboRepo to manage multiple packages in a monorepo. It uses the basic TurboRepo
+example and builds on top of it and example of how to combine TurboRepo with other libraries like shadcn-ui, next-intl,
+zod, and react-hook-form.
 
-### Apps and Packages
+## Special thanks
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+Special thanks to [gcascio](https://github.com/gcascio) for
+his [next-intl-zod](https://github.com/gcascio/next-intl-zod) implementation based
+on [zod-i18n](https://github.com/aiji42/zod-i18n) by [aiji42](https://github.com/aiji42).
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+## Making of
 
-### Utilities
+### Initial setup
 
-This Turborepo has some additional tools already setup for you:
+I started with `pnpm create turbo` to create a basic turbo repo and started adding in tailwind and shadcn-ui.
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+shadcn-ui could not find the framework with `pnpm dlx shadcn@latest init` so I needed to manually install it.
+I followed the instructions on the [shadcn-ui manual installation](https://ui.shadcn.com/docs/installation/manual) page.
 
-### Build
+I did run into issues with importing the css from `@repo/ui` in the `web` app. I had to add postcss and thus
+autoprefixer to the `web` app.
+It had to be in this order:
 
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm build
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm dev
+```js
+// web/postcss.config.js
+module.exports = {
+    plugins: {
+        "postcss-import": {},
+        tailwindcss: {},
+        autoprefixer: {},
+    },
+};
 ```
 
-### Remote Caching
+and then in the web/src/app/globals.css:
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+```css
+@import "@repo/ui/src/themes/default.css";
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 ```
 
-## Useful Links
+Now for some reason importing after using @tailwind breaks the app. In an app I made for the organisation I work for
+this did work properly however and also using the exports clock of package.json but it must have something to do with
+module resolution and postcss.
 
-Learn more about the power of Turborepo:
+Another thing I changed from shadcn-ui is the use of font-sans by default and activating anti-aliasing as you can see in
+default.css.
 
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+```css
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground font-sans antialiased;
+        font-feature-settings: "rlig" 1, "calt" 1;
+    }
+}
+```
+
+### Forms
+
+Once the themes were loading and components started working I added in a form.
+Using `pnpm dlx shadcn@latest add form` from the `packages/ui` directory and I added the form components from shadcn to
+the ui package into `src/components/ui`.
+
+I created a simple example-form page with a reusable form component that uses react-hook-form and zod for validation.
+
+One thing that does suck however is that zod only fires "input required" errors when the values are `undefined`.
+So if in default values you set a value to an empty string it will not fire the
+`z.string({required_error: "Name is required"}` error. This is a bit annoying but
+So when settings default values realize that `undefined` is a totally valid value. Also know that when using the
+`form.handleSubmit` the data that comes from it cannot be `undefined` unless `z.partial` or `z.optional` is used.
+
+### About zod
+
+Zod is great when using it for a single language but once you go multi-language it becomes alarmingly more difficult to
+satisfy user experience.
+
+#### Pros
+
+- Easy to use
+- Great developer experience (as long as you avoid multi-language)
+- Build with TypeScript in mind
+
+#### Cons
+
+- Horrible end user error messages (users do not need to see things such as type names such as `string` or `array` these
+  are super confusing to them)
+- No build-in multi-language support like for example `yup-locales`.
+- The error map while typesafe is difficult to navigate and understand.
+
+#### Overall
+
+Thanks to legends like [aiji42](https://github.com/aiji42) and [gcascio](https://github/gcascio) we all rest a bit
+easier at night knowing that we can use zod in our projects with great i18n support provided you are willing to adapt a
+tiny bit.
+
+### WORK IN PROGRESS
