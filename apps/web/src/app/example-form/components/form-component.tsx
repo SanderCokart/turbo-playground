@@ -6,24 +6,28 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
+  FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
-  FormDescription,
   FormMessage,
 } from "@repo/ui/form";
 import { Input } from "@repo/ui/input";
-import { Button } from "@repo/ui/button"; // Assuming 'Input' is a component from your UI library
+import { Button } from "@repo/ui/button";
 
 const schema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email address"),
+  name: z.string().min(1),
+  email: z.string().email(),
 });
 
 export const FormComponent: FC = () => {
   const form = useForm({
     resolver: zodResolver(schema),
+    defaultValues: {
+      name: "",
+      email: "",
+    },
   });
 
   const onSubmit = form.handleSubmit((data) => {
@@ -36,11 +40,11 @@ export const FormComponent: FC = () => {
         <FormField
           control={form.control}
           name="name"
-          render={() => (
+          render={({ field, fieldState, formState }) => (
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input {...form.register("name")} />
+                <Input {...field} />
               </FormControl>
               <FormDescription>Enter your name</FormDescription>
               <FormMessage />
@@ -50,11 +54,11 @@ export const FormComponent: FC = () => {
         <FormField
           control={form.control}
           name="email"
-          render={() => (
+          render={({ field, fieldState, formState }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input {...form.register("email")} />
+                <Input {...field} />
               </FormControl>
               <FormDescription>Enter your email address</FormDescription>
               <FormMessage />

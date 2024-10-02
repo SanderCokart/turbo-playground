@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import type { ReactNode } from "react";
-import { NextIntlClientProvider } from "next-intl";
-import { getLocale, getMessages } from "next-intl/server";
+import { getLocale } from "next-intl/server";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { GlobalProviders } from "@/app/providers/global-providers";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -27,20 +27,16 @@ export default async function RootLayout({
 }>) {
   const locale = await getLocale();
 
-  // Providing all messages to the client
-  // side is the easiest way to get started
-  const messages = await getMessages();
-
   return (
     <html lang={locale}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} flex min-h-dvh flex-col`}
       >
-        <NextIntlClientProvider messages={messages}>
+        <GlobalProviders>
           <LocaleSwitcher />
 
           {children}
-        </NextIntlClientProvider>
+        </GlobalProviders>
       </body>
     </html>
   );

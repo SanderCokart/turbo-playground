@@ -5,7 +5,7 @@
     }
   },
   "form": {
-    "name": "Name",
+    "name": "Naam",
     "email": "Email"
   }
 }
